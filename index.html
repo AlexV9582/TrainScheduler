@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Train Scheduler</title>
+	<link rel="stylesheet" type="text/css" href="assets/reset.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="assets/style.css">
+	<script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="page-header">
+			<h1 class="text-center">Train Schedule</h1>
+		</div>
+		<div class="panel">
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="panel-header">
+						<h3>Train Name</h3>
+					</div>
+					<div class="panel-body">
+						<p id="train-name">Train Name Goes Here</p>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="panel-header">
+						<h3>Train Destination</h3>
+					</div>
+					<div class="panel-body">
+						<p id="destination">Train Destination Goes Here</p>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="panel-header">
+						<h3>Train First Time </h3>
+					</div>
+					<div class="panel-body">
+						<p id="origin-time">Train First Time Goes Here</p>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="panel-header">
+						<h3>Train Frequency</h3>
+					</div>
+					<div class="panel-body">
+						<p id="frequency">Train Frequency Goes Here</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel">
+			<div class="row">	
+				<div class="col-sm-6">
+					<div class="panel-header"><h3 class="text-center">Add New Train to Schedule</h3>
+						<div class="panel-body">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Train Name" id="train-name-entry">
+							</div>
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Destination" id="destination-entry">
+							</div>
+							<div class="input-group">
+								<input type="time" class="form-control" placeholder="First Train Time" id="origin-time-entry">
+							</div>
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Frequency" id="frequency-entry">
+							</div>
+							<div>
+								<button type="button" class="btn btn-success" id="submit-button">Submit</button>
+								<button type="button" class="btn btn-danger" id="clear-button">Clear</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="panel-header"><h3 class="text-center">Last Train Added</h3>
+						<div class="panel-body">
+							<div class="text-center" id="last-train">
+								<p id="last-train-name">Last Train Name Goes Here</p>
+								<p id="last-train-destination">Last Train Destination Goes Here</p>
+								<p id="last-train-time">Last Train Time Goes Here</p>
+								<p id="last-train-frequency">Last Train Frequency Goes Here</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/app.js"></script>
+</html>

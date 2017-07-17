@@ -51,17 +51,38 @@ $("#submit-button").on("click", function(){
 database.ref().on("child_added", function(snapshot){
 	var sv = snapshot.val();
 	//console.log(sv)
-	// Get originTime and convert to moment time
-	var freq = parseInt(snapshot.val().frequency);
-	var currentTime = moment()
+	// Convert frequency and currentTime to Unix time
+	var freq = ((parseInt(sv.frequency) * 60) * 1000);
+	var currentTime = moment().format("X")
+	console.log(currentTime)
+
+	//Set time to new variable for moment object and set to Unix time
+
 	var hoursSplit = parseInt(sv.originTime.split(":")[0])
-	console.log(hoursSplit)
+	//console.log(hoursSplit)
 	var minutesSplit = parseInt(sv.originTime.split(":")[1])
-	console.log(minutesSplit)
+	//console.log(minutesSplit)
 	var firstTime = moment().set({'hour': hoursSplit, 'minute': minutesSplit});
-	console.log(firstTime)
-	var timeRemainder = firstTime.to(currentTime)
-	console.log(moment(timeRemainder).format("HH:mm"))
+	var firstTimeFormatted = moment(firstTime).format("X")
+	console.log(firstTimeFormatted)
+	console.log(freq)
+
+	// Find the difference between current time and new firstTime variable
+
+	var timeRemainder = (currentTime - firstTimeFormatted)
+	console.log(timeRemainder)
+
+	//Find number of trips made between origin and current times and add time for next trip
+
+	var nextArrivalFreq = (((timeRemainder / freq)) + 1) * sv.frequency
+	var nextArrivalHours = Math.floor(nextArrivalFreq / 60)
+	var nextArrivalMinutes = nextArrivalFreq - (nextArrivalHours * 60)
+	nextArrival = moment(moment(firstTime).add({hours: nextArrivalHours, minutes: nextArrivalMinutes})).format("HH:mm")
+	
+	console.log(sv.originTime)
+	console.log(nextArrivalMinutes)
+	console.log(nextArrivalHours)
+	console.log(nextArrival)
 	$("tbody").append($("<tr><td>"+sv.trainName+"</td><td>"+sv.destination+"</td><td>"+sv.frequency+"</td><td>"+nextArrival+"</td><td>"+minutesAway+"</tr>"));
 })
 

@@ -7,20 +7,22 @@ var config = {
 	messagingSenderId: "1060355102489"
 };
 firebase.initializeApp(config);
-var database = firebase.database()
+var database    = firebase.database()
 var trainName;
 var destination;
 var originTime;
 var frequency;
 var nextArrival = 0;
 var minutesAway = 0;
+var hoursSplit;
+var minutesSplit;
 
 database.ref().on("value", function(snapshot) {
 	if (snapshot.child("trainName").exists() && snapshot.child("destination").exists() && snapshot.child("originTime").exists() && snapshot.child("frequency").exists()) {
-	    trainName = snapshot.val().trainName;
+	    trainName   = snapshot.val().trainName;
 	    destination = snapshot.val().destination;
-	    originTime = snapshot.val().originTime;
-	    frequency = snapshot.val().frequency;
+	    originTime  = snapshot.val().originTime;
+	    frequency   = snapshot.val().frequency;
 
     // Log the local data to the console.
 	    /*console.log(trainName);
@@ -39,12 +41,16 @@ database.ref().on("value", function(snapshot) {
 
 $("#submit-button").on("click", function(){	
 	database.ref().push({
-		trainName: $("#train-name-entry").val().trim(),
+		trainName:   $("#train-name-entry").val().trim(),
 		destination: $("#destination-entry").val().trim(),
-		originTime: $("#origin-time-entry").val().trim(),
-		frequency: $("#frequency-entry").val().trim(),
-		dateAdded: firebase.database.ServerValue.TIMESTAMP
+		originTime:  $("#origin-time-entry").val().trim(),
+		frequency:   $("#frequency-entry").val().trim(),
+		dateAdded:   firebase.database.ServerValue.TIMESTAMP
 	})
+	$("#train-name-entry").val("");
+	$("#destination-entry").val("");
+	$("#origin-time-entry").val("");
+	$("#frequency-entry").val("");    
 })
 
 //Add data to table
@@ -52,41 +58,65 @@ database.ref().on("child_added", function(snapshot){
 	var sv = snapshot.val();
 	//console.log(sv)
 	// Convert frequency and currentTime to Unix time
-	var freq = ((parseInt(sv.frequency) * 60) * 1000);
+	var freq = (parseInt(sv.frequency) * 60);
 	var currentTime = moment().format("X")
-	console.log(currentTime)
+	//console.log(currentTime)
 
 	//Set time to new variable for moment object and set to Unix time
 
-	var hoursSplit = parseInt(sv.originTime.split(":")[0])
+	hoursSplit = parseInt(sv.originTime.split(":")[0])
 	//console.log(hoursSplit)
-	var minutesSplit = parseInt(sv.originTime.split(":")[1])
+	minutesSplit = parseInt(sv.originTime.split(":")[1])
 	//console.log(minutesSplit)
 	var firstTime = moment().set({'hour': hoursSplit, 'minute': minutesSplit});
 	var firstTimeFormatted = moment(firstTime).format("X")
-	console.log(firstTimeFormatted)
-	console.log(freq)
+	//console.log(firstTimeFormatted)
+	//console.log(freq)
 
 	// Find the difference between current time and new firstTime variable
+	if (currentTime > firstTimeFormatted) {
+		var timeRemainder = (currentTime - firstTimeFormatted)
+		//console.log(timeRemainder)
 
-	var timeRemainder = (currentTime - firstTimeFormatted)
-	console.log(timeRemainder)
+		//Find number of trips made between origin and current times and add time for next trip
 
-	//Find number of trips made between origin and current times and add time for next trip
+		var nextArrivalFreq    = ((Math.floor(timeRemainder / freq)) + 1) * parseInt(sv.frequency)
+		var nextArrivalHours   = Math.floor(nextArrivalFreq / 60)
+		var nextArrivalMinutes = nextArrivalFreq - (nextArrivalHours * 60)
+		nextArrival            = moment(moment(firstTime).add({hours: nextArrivalHours, minutes: nextArrivalMinutes})).format("HH:mm")
+		
+		/*console.log(sv.originTime)
+		console.log(nextArrivalMinutes)
+		console.log(nextArrivalHours)
+		console.log(nextArrival)*/
+	}else {
+		nextArrival = sv.originTime
+	}
 
-	var nextArrivalFreq = (((timeRemainder / freq)) + 1) * sv.frequency
-	var nextArrivalHours = Math.floor(nextArrivalFreq / 60)
-	var nextArrivalMinutes = nextArrivalFreq - (nextArrivalHours * 60)
-	nextArrival = moment(moment(firstTime).add({hours: nextArrivalHours, minutes: nextArrivalMinutes})).format("HH:mm")
+	//Convert current time into minutes
+
+	var currentTimeStr             = moment().format("HH:mm")
+	var hoursSplitCurrent          = parseInt(currentTimeStr.split(":")[0])
+	var minutesSplitCurrent        = parseInt(currentTimeStr.split(":")[1])
+	var hoursSplitCurrentConverted = hoursSplitCurrent * 60
+	var convertedCurrent           = hoursSplitCurrentConverted + minutesSplitCurrent
+	console.log(convertedCurrent)
+
+	//Convert originTime to minutes
+
+	originTimeConverted = (parseInt(sv.originTime.split(":")[0]) * 60) + (parseInt(sv.originTime.split(":")[1]))
+	console.log(originTimeConverted)
 	
-	console.log(sv.originTime)
-	console.log(nextArrivalMinutes)
-	console.log(nextArrivalHours)
-	console.log(nextArrival)
+	//Find remaining minutes and display in table
+	
+	minutesAway  =  convertedCurrent - originTimeConverted
+	//console.log(minutesAway)
+	//console.log(nextArrival)
 	$("tbody").append($("<tr><td>"+sv.trainName+"</td><td>"+sv.destination+"</td><td>"+sv.frequency+"</td><td>"+nextArrival+"</td><td>"+minutesAway+"</tr>"));
 })
 
 //Add last added data to panel
+
 database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
 	var sv = snapshot.val();
 	$("#last-train-name").html(sv.trainName);

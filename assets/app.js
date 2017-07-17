@@ -12,6 +12,8 @@ var trainName;
 var destination;
 var originTime;
 var frequency;
+var nextArrival = 0;
+var minutesAway = 0;
 
 database.ref().on("value", function(snapshot) {
 	if (snapshot.child("trainName").exists() && snapshot.child("destination").exists() && snapshot.child("originTime").exists() && snapshot.child("frequency").exists()) {
@@ -20,23 +22,11 @@ database.ref().on("value", function(snapshot) {
 	    originTime = snapshot.val().originTime;
 	    frequency = snapshot.val().frequency;
 
-    // Append to p element to reflect the local value in firebase.
-	    $("#last-train-name").html(trainName);
-	    $("#last-train-destination").html(destination);
-	    $("#last-train-time").html(originTime);
-	    $("#last-train-frequency").html(frequency);
-
     // Log the local data to the console.
-	    console.log(trainName);
+	    /*console.log(trainName);
 	    console.log(destination);
 	    console.log(originTime);
-	    console.log(frequency);
-
-    //Send any existing user entered data to the screen
-	    $("#train-name").html(trainName)
-	    $("#destination").html(destination)
-	    $("#origin-time").html(originTime)
-	    $("#frequency").html(frequency) 
+	    console.log(frequency);*/
   }
 })
   
@@ -44,8 +34,6 @@ database.ref().on("value", function(snapshot) {
   $("#clear-button").on("click", function(){
   	database.ref().set({})
   })
-  	
-
 
   // Get user input from form and add to Firebase
 
@@ -54,16 +42,50 @@ $("#submit-button").on("click", function(){
 		trainName: $("#train-name-entry").val().trim(),
 		destination: $("#destination-entry").val().trim(),
 		originTime: $("#origin-time-entry").val().trim(),
-		frequency: $("#frequency-entry").val().trim()
+		frequency: $("#frequency-entry").val().trim(),
+		dateAdded: firebase.database.ServerValue.TIMESTAMP
 	})
-
-// Display firebase data in panels
-	$("#last-train-name").html(trainName);
-    $("#last-train-destination").html(destination);
-    $("#last-train-time").html(originTime);
-    $("#last-train-frequency").html(frequency);
-	
 })
+
+//Add data to table
+database.ref().on("child_added", function(snapshot){
+	var sv = snapshot.val();
+	//console.log(sv)
+	// Get originTime and convert to moment time
+	var freq = parseInt(snapshot.val().frequency);
+	var currentTime = moment()
+	var hoursSplit = parseInt(sv.originTime.split(":")[0])
+	console.log(hoursSplit)
+	var minutesSplit = parseInt(sv.originTime.split(":")[1])
+	console.log(minutesSplit)
+	var firstTime = moment().set({'hour': hoursSplit, 'minute': minutesSplit});
+	console.log(firstTime)
+	var timeRemainder = firstTime.to(currentTime)
+	console.log(moment(timeRemainder).format("HH:mm"))
+	$("tbody").append($("<tr><td>"+sv.trainName+"</td><td>"+sv.destination+"</td><td>"+sv.frequency+"</td><td>"+nextArrival+"</td><td>"+minutesAway+"</tr>"));
+})
+
+//Add last added data to panel
+database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+	var sv = snapshot.val();
+	$("#last-train-name").html(sv.trainName);
+	$("#last-train-destination").html(sv.destination);
+	$("#last-train-frequency").html(sv.frequency);
+	$("#last-train-time").html(sv.originTime)
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -7,46 +7,28 @@
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="assets/style.css">
 	<script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+	<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
 </head>
 <body>
 	<div class="container">
 		<div class="page-header">
 			<h1 class="text-center">Train Schedule</h1>
 		</div>
-		<div class="panel">
-			<div class="row">
-				<div class="col-sm-3">
-					<div class="panel-header">
-						<h3>Train Name</h3>
-					</div>
-					<div class="panel-body">
-						<p id="train-name">Train Name Goes Here</p>
-					</div>
-				</div>
-				<div class="col-sm-3">
-					<div class="panel-header">
-						<h3>Train Destination</h3>
-					</div>
-					<div class="panel-body">
-						<p id="destination">Train Destination Goes Here</p>
-					</div>
-				</div>
-				<div class="col-sm-3">
-					<div class="panel-header">
-						<h3>Train First Time </h3>
-					</div>
-					<div class="panel-body">
-						<p id="origin-time">Train First Time Goes Here</p>
-					</div>
-				</div>
-				<div class="col-sm-3">
-					<div class="panel-header">
-						<h3>Train Frequency</h3>
-					</div>
-					<div class="panel-body">
-						<p id="frequency">Train Frequency Goes Here</p>
-					</div>
-				</div>
+		<div  class="panel">
+			<div class="panel-header">
+				<p>Train Info</p>
+			</div>
+			<div class="panel-body">
+				<table class="table">
+					<thead>
+						<th>Train Name</th>
+						<th>Destination</th>
+						<th>Frequency</th>
+						<th>Next Arrival</th>
+						<th>Minutes Away</th>
+					</thead>
+					<tbody></tbody>
+				</table>				
 			</div>
 		</div>
 		<div class="panel">
@@ -61,7 +43,7 @@
 								<input type="text" class="form-control" placeholder="Destination" id="destination-entry">
 							</div>
 							<div class="input-group">
-								<input type="time" class="form-control" placeholder="First Train Time" id="origin-time-entry">
+								<input type="text" class="form-control" placeholder="First Train Time" id="origin-time-entry">
 							</div>
 							<div class="input-group">
 								<input type="text" class="form-control" placeholder="Frequency" id="frequency-entry">
@@ -79,8 +61,8 @@
 							<div class="text-center" id="last-train">
 								<p id="last-train-name">Last Train Name Goes Here</p>
 								<p id="last-train-destination">Last Train Destination Goes Here</p>
-								<p id="last-train-time">Last Train Time Goes Here</p>
 								<p id="last-train-frequency">Last Train Frequency Goes Here</p>
+								<p id="last-train-time">Last Train Time Goes Here</p>
 							</div>
 						</div>
 					</div>

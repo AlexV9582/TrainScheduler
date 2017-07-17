@@ -102,15 +102,18 @@ database.ref().on("child_added", function(snapshot){
 	var convertedCurrent           = hoursSplitCurrentConverted + minutesSplitCurrent
 	console.log(convertedCurrent)
 
-	//Convert originTime to minutes
+	//Convert the nextArrival time to minutes
 
-	originTimeConverted = (parseInt(sv.originTime.split(":")[0]) * 60) + (parseInt(sv.originTime.split(":")[1]))
-	console.log(originTimeConverted)
 	
+	var hoursSplitNext          = parseInt(nextArrival.split(":")[0])
+	var minutesSplitNext        = parseInt(nextArrival.split(":")[1])
+	var hoursSplitNextConverted = hoursSplitNext * 60
+	var convertedNext           = hoursSplitNextConverted + minutesSplitNext
+	console.log(convertedNext)
+
 	//Find remaining minutes and display in table
-	
-	minutesAway  =  convertedCurrent - originTimeConverted
-	//console.log(minutesAway)
+	minutesAway                    = convertedNext - convertedCurrent
+	console.log(minutesAway)
 	//console.log(nextArrival)
 	$("tbody").append($("<tr><td>"+sv.trainName+"</td><td>"+sv.destination+"</td><td>"+sv.frequency+"</td><td>"+nextArrival+"</td><td>"+minutesAway+"</tr>"));
 })

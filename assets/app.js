@@ -45,18 +45,20 @@ $("#submit-button").on("click", function(){
 		destination: $("#destination-entry").val().trim(),
 		originTime:  $("#origin-time-entry").val().trim(),
 		frequency:   $("#frequency-entry").val().trim(),
-		dateAdded:   firebase.database.ServerValue.TIMESTAMP
+		dateAdded:   firebase.database.ServerValue.TIMESTAMP,
+		minutesAway: minutesAway
 	})
 	$("#train-name-entry").val("");
 	$("#destination-entry").val("");
 	$("#origin-time-entry").val("");
-	$("#frequency-entry").val("");    
+	$("#frequency-entry").val(""); 
+	   
 })
 
 //Add data to table
 database.ref().on("child_added", function(snapshot){
 	var sv = snapshot.val();
-	//console.log(sv)
+	console.log(sv)
 	// Convert frequency and currentTime to Unix time
 	var freq = (parseInt(sv.frequency) * 60);
 	var currentTime = moment().format("X")
@@ -100,7 +102,7 @@ database.ref().on("child_added", function(snapshot){
 	var minutesSplitCurrent        = parseInt(currentTimeStr.split(":")[1])
 	var hoursSplitCurrentConverted = hoursSplitCurrent * 60
 	var convertedCurrent           = hoursSplitCurrentConverted + minutesSplitCurrent
-	console.log(convertedCurrent)
+	//console.log(convertedCurrent)
 
 	//Convert the nextArrival time to minutes
 
@@ -109,11 +111,11 @@ database.ref().on("child_added", function(snapshot){
 	var minutesSplitNext        = parseInt(nextArrival.split(":")[1])
 	var hoursSplitNextConverted = hoursSplitNext * 60
 	var convertedNext           = hoursSplitNextConverted + minutesSplitNext
-	console.log(convertedNext)
+	//console.log(convertedNext)
 
 	//Find remaining minutes and display in table
 	minutesAway                    = convertedNext - convertedCurrent
-	console.log(minutesAway)
+	//console.log(minutesAway)
 	//console.log(nextArrival)
 	$("tbody").append($("<tr><td>"+sv.trainName+"</td><td>"+sv.destination+"</td><td>"+sv.frequency+"</td><td>"+nextArrival+"</td><td>"+minutesAway+"</tr>"));
 })
